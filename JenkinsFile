@@ -11,10 +11,14 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('Fim'){
+        stage('Sonar Analysis'){
+            environment {
+                scannerHome = tool 'SONAR_LOCAL'
+            }
             steps{
-                sleep (5)
-                sh 'echo fim'
+                withSonarQubeEnv('SONAR_LOCAL'){
+                    sh "${scannerHome}/bin/sonar-scanner -e -Dsonar.projectKey=DEPLOYBACK -Dsonar.projectName='DEPLOYBACK' -Dsonar.host.url=http://mo76was1.fyre.ibm.com -Dsonar.token=sqp_c5326f5f65b168b5088dd4c9f9c1a3e938a6e50c -Dsonar.java.binaries=target -Dsonar.coverage.exclusions=**/.mvn/**,**/src/test/**,**/model/**, **Application.java -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=300"
+                }
             }
         }
     }
